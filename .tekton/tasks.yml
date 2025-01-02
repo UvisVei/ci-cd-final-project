@@ -4,7 +4,7 @@ kind: Task
 metadata:
   name: cleanup
 spec:
-  description: This task will clean up a workspace by deleting all the files.
+  description: This task will clean up a workspace by deleting all of the files.
   workspaces:
     - name: source
   steps:
@@ -12,8 +12,8 @@ spec:
       image: alpine:3
       env:
         - name: WORKSPACE_SOURCE_PATH
-          value: $(workspace.source.path)
-      workingDir: $(workspace.source.path)
+          value: $(workspaces.source.path)
+      workingDir: $(workspaces.source.path)
       securityContext:
         runAsNonRoot: false
         runAsUser: 0
@@ -34,6 +34,7 @@ spec:
           rm -rf "${WORKSPACE_SOURCE_PATH}"/..?*
         fi
 
+
 ---
 
 apiVersion: tekton.dev/v1beta1
@@ -41,13 +42,13 @@ kind: Task
 metadata:
   name: nose
 spec:
-  workspaces:
-    - name: source
   params:
     - name: args
-      description: Argruments to pass to nose
+      description: Arguments to pass to nose
       type: string
       default: "-v"
+  workspaces:
+    - name: source
   steps:
     - name: nosetests
       image: python:3.9-slim
